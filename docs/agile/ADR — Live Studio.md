@@ -26,7 +26,7 @@ Sebagai **Junior Developer**, fokus utama kita adalah membuat aplikasi yang:
 | **UI Framework** | Jetpack Compose + Material 3 | Mempermudah pembuatan UI secara deklaratif (Single Activity Architecture). |
 | **Arsitektur UI** | MVVM + Clean Architecture Sederhana | Memisahkan *Data Layer*, *Domain Layer*, dan *UI Layer*. |
 | **Target Android** | Min SDK 24 (Android 7.0) <br> Target SDK 37 | SDK 24 mencakup mayoritas HP pengguna arisan. Target SDK 37 memenuhi standar Google Play terbaru. |
-| **Autentikasi & API** | Facebook Android SDK | Digunakan untuk **Facebook Login** dan membuat sesi siaran via **Facebook Live Video API** (`GraphRequest`). |
+| **Autentikasi & API** | Firebase Auth + Facebook Login SDK | Digunakan untuk **Firebase Auth (Facebook Provider)**, memegang sesi user terpusat (Firebase UID), serta membuat sesi siaran via **Facebook Live Video API** (`GraphRequest`). |
 | **Engine Streaming** | `RootEncoder` (pedroSG94) | Library open-source teruji untuk merekam layar (`MediaProjection`) dan mengirim stream RTMPS ke Facebook Live. |
 | **Kamera Depan** | CameraX | Mengakses kamera depan HP untuk overlay wajah penyiar saat siaran live. |
 | **Penyimpanan Lokal** | Jetpack DataStore (Preferences) | Untuk menyimpan pengaturan sederhana (tema gelap/terang, judul siaran terakhir, privasi terakhir). Tanpa database SQLite/Room. |
@@ -62,7 +62,7 @@ Aplikasi dibangun dengan pemisahan 3 layer utama agar kodenya rapi dan mudah dir
 ## 4. Alur Kerja Utama (Main Data Flow)
 
 1. **Alur Login**:
-   - Pengguna buka aplikasi -> Klik "Masuk dengan Facebook" -> `AuthRepository` memproses via Facebook SDK -> Token tersimpan -> Masuk Beranda.
+   - Pengguna buka aplikasi -> Klik "Masuk dengan Facebook" -> `AuthRepository` memproses credential via Firebase Auth (`FacebookAuthProvider`) -> Sesi Firebase UID & Facebook Access Token tersimpan -> Masuk Beranda.
 2. **Alur Memulai Live**:
    - Pengguna isi Judul & Pilih Privasi (Publik/Teman).
    - Pengguna klik "Mulai Live".
@@ -121,7 +121,7 @@ Pengerjaan dibagi menjadi **Tahap Setup Awal** dan **Tahap Eksekusi Per Fitur (D
 Setiap fitur dieksekusi secara berurutan melewati **Data Layer**, **Domain Layer**, lalu **UI Layer**:
 
 #### 1. Fitur Login Facebook
-- **Data Layer**: Integrasi Facebook Login SDK, `AuthRepositoryImpl`, simpan token/sesi ke local DataStore.
+- **Data Layer**: Integrasi Firebase Auth + Facebook Login SDK, `AuthRepositoryImpl`, simpan token/sesi Firebase UID & Facebook AccessToken ke local DataStore.
 - **Domain Layer**: Interface `AuthRepository`, `GetLoginStateUseCase`, `LoginFacebookUseCase`, `LogoutUseCase`.
 - **UI Layer**: `LoginViewModel`, `LoginScreen` (Compose) dengan tombol Facebook Login & penanganan UI State (Loading, Success, Error).
 
