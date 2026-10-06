@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1005521877278",
+    "project_id": "live-studio-b9c0c",
+    "storage_bucket": "live-studio-b9c0c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005521877278:android:d0fb8f7278e0edde15f10f",
+        "android_client_info": {
+          "package_name": "id.co.mondo.livestudio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgfDqwhCYkelww9bNUbQVg-q8ktZR6h7k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

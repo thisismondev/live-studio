@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Live Studio</string>
+    <string name="login_title">Live Studio</string>
+    <string name="login_subtitle">Siarkan Undian Arisan dengan 1 HP</string>
+    <string name="btn_login_facebook">Masuk dengan Facebook</string>
+    <string name="prepare_live_title">Persiapan Siaran</string>
+    <string name="label_broadcast_title">Judul Siaran</string>
+    <string name="hint_broadcast_title">Masukkan judul siaran&#8230;</string>
+    <string name="label_privacy">Privasi Siaran</string>
+    <string name="privacy_public">Publik</string>
+    <string name="privacy_friends">Teman</string>
+    <string name="btn_start_live">Mulai Live</string>
+    <string name="btn_stop_live">Stop Live</string>
 </resources>
