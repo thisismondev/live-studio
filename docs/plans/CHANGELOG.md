@@ -1,5 +1,53 @@
 # Changelog Rencana Eksekusi Live Studio
 
+## [E1/Facebook SDK] Migrasi ke Facebook Login SDK & Verifikasi Emulator - Selesai
+*Tanggal & Waktu: 21 Oktober 2026, 01:00 WIB*
+
+- Hapus seluruh dependensi `firebase-auth`. Pertahankan Firebase BoM `35.0.2` dan plugin `google-services` untuk fitur pasca-MVP.
+- Tambahkan library `com.facebook.android:facebook-login:18.3.0` dan konfigurasi pembacaan Facebook App ID & Client Token dari `local.properties` via `resValue`.
+- Implementasi `SecureTokenStorage.kt` berbasis Android Keystore (AES-GCM) dengan file di `noBackupFilesDir`.
+- Update `PreferencesManager.kt` untuk hanya menyimpan data non-sensitif (`facebookUserId`, `userName`, `userPhotoUrl`, `tokenExpiresAt`).
+- Implementasi `AuthRepositoryImpl.kt` dengan `LoginManager` (scopes: `public_profile`, `publish_video`), `GraphRequest` untuk profil, dan `refreshTokenIfNeeded`.
+- Konfigurasi `AndroidManifest.xml` (meta-data Facebook, `CustomTabActivity`, `<queries>` paket Facebook).
+- Pengecualian berkas token di `backup_rules.xml` dan `data_extraction_rules.xml`.
+- Pengujian langsung di emulator Android Studio dengan akun developer berhasil terverifikasi.
+
+---
+## [Docs] Revisi Rencana: Ganti Firebase Auth ke Facebook Login SDK, Tambah E7 - Rencana (belum ada perubahan kode)
+*Tanggal & Waktu: 20 Oktober 2026, 23:56 WIB*
+
+- E1 dibuka kembali (`[ ] Direvisi`): login memakai Facebook Login SDK, bukan Firebase Auth. Identitas tunggal `facebookUserId`, `tokenExpiresAt` dari `AccessToken.expirationTime`, token disimpan terenkripsi (`SecureTokenStorage`), refresh token ditambahkan.
+- E0, ADR, dan docs README disesuaikan: `firebase-auth` dihapus dari rencana; Google Services plugin, `google-services.json`, dan Firebase BoM tetap dipasang untuk fitur pasca-MVP. Facebook Login SDK ditambahkan.
+- Kebijakan backup: `allowBackup="true"` dipertahankan, berkas token dikecualikan dari backup dan device transfer.
+- PRD Parking Lot: Crashlytics/Analytics dicatat sebagai pasca-MVP.
+- Epic baru E7 (`e7-kepatuhan-rilis.md`): Facebook App Review paralel sejak E1 selesai, kepatuhan Google Play mendekati rilis.
+- Kode belum diubah; entri E0/E1 di bawah mencatat implementasi lama berbasis Firebase Auth.
+
+---
+## [E0/Hilt] Integrasi Dagger Hilt & Update E0 — Selesai
+*Tanggal & Waktu: 6 Oktober 2026, 16:01 WIB*
+
+- Integrasi Dagger Hilt `2.60.1` & KSP Plugin `2.0.21-1.0.28` pada Version Catalog, `build.gradle.kts` (root), dan `app/build.gradle.kts`.
+- Pembuatan kelas Application `LiveStudioApp.kt` (`@HiltAndroidApp`) dan pendaftaran di `AndroidManifest.xml`.
+- Pembuatan Hilt Module `di/AppModule.kt` (`@Module`, `@InstallIn`) untuk menyediakan singleton dependencies (`FirebaseAuth`, `PreferencesManager`, `AuthRepository`, dan UseCases).
+- Penambahan anotasi `@AndroidEntryPoint` pada `MainActivity.kt` dan `@HiltViewModel` pada `LoginViewModel.kt`.
+- Penambahan flag `android.disallowKotlinSourceSets=false` di `gradle.properties`.
+- Pembaruan dokumen `docs/plans/e0-setup-dan-konfigurasi.md` dan `docs/agile/ADR — Live Studio.md`.
+- Pengujian build `./gradlew assembleDebug` berhasil dengan **BUILD SUCCESSFUL**.
+
+---
+
+## [E1] Fitur Login Facebook via Firebase Auth — Selesai
+*Tanggal & Waktu: 6 Oktober 2026, 15:30 WIB*
+
+- Pembaruan dokumen rencana eksekusi `docs/plans/e1-login-facebook.md` dengan alur Firebase Auth OAuth.
+- Pembuatan Domain Layer: model `UserSession.kt`, interface contract `AuthRepository.kt`, serta UseCases (`LoginFacebookUseCase.kt`, `GetLoginStateUseCase.kt`, `LogoutUseCase.kt`).
+- Pembuatan Data Layer: `PreferencesManager.kt` (manajemen DataStore Preferences) dan `AuthRepositoryImpl.kt` (integrasi `FirebaseAuth.OAuthProvider("facebook.com")`).
+- Pembuatan UI Layer: `LoginUiState.kt`, `LoginViewModel.kt`, dan `LoginScreen.kt` (Jetpack Compose Screen M3, Edge-to-Edge).
+- Pengujian build `./gradlew assembleDebug` berhasil dengan **BUILD SUCCESSFUL**.
+
+---
+
 ## [E0] Setup & Konfigurasi Core Proyek — Selesai
 *Tanggal & Waktu: 6 Oktober 2026, 15:20 WIB*
 

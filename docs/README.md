@@ -10,7 +10,7 @@ Selamat datang di direktori dokumentasi proyek **Live Studio** (aplikasi Android
 |---|---|---|
 | **[`Vision Doc`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/agile/Vision%20Doc%20—%20Live%20Arisan%20Streamer.md)** | Latar belakang masalah, target pengguna, outcome, dan metrik keberhasilan. | Approved |
 | **[`PRD`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/agile/PRD%20—%20Live%20Arisan%20Streamer.md)** | Persyaratan Fungsional (FR-01 s/d FR-29), Alur Pengguna (J1–J5), Pembagian MVP (§12), & Parking Lot (§13). | Approved |
-| **[`ADR`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/agile/ADR%20—%20Live%20Studio.md)** | Arsitektur (Data-Domain-UI Layer), Tech Stack (Compose, RootEncoder, DataStore, Firebase Auth), & Tahapan Setup. | Approved |
+| **[`ADR`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/agile/ADR%20—%20Live%20Studio.md)** | Arsitektur (Data-Domain-UI Layer), Tech Stack (Compose, RootEncoder, DataStore, Facebook Login SDK), & Tahapan Setup. | Approved |
 | **[`Design Brief`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/agile/Design%20Brief%20—%20Live%20Studio.md)** | Panduan UI/UX Material 3, Edge-to-Edge, Portrait Mode Only, & Alur 11 Layar/Komponen. | Approved |
 
 ### Urutan Baca Dokumen Produk:
@@ -25,12 +25,13 @@ Setiap berkas rencana eksekusi memuat checkbox terstruktur berdasarkan **Setup L
 | Epic | Berkas Rencana | Tahap Rilis | Status |
 |---|---|---|---|
 | **E0 — Setup & Konfigurasi Core Proyek** | [`e0-setup-dan-konfigurasi.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e0-setup-dan-konfigurasi.md) | MVP-inti | `[x] Selesai` |
-| **E1 — Login Facebook via Firebase Auth** | [`e1-login-facebook.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e1-login-facebook.md) | MVP-inti | `[ ] Belum mulai` |
+| **E1 — Login Facebook via Facebook Login SDK** | [`e1-login-facebook.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e1-login-facebook.md) | MVP-inti | `[x] Selesai` |
 | **E2 — Persiapan Siaran** | [`e2-persiapan-siaran.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e2-persiapan-siaran.md) | MVP-inti | `[ ] Belum mulai` |
 | **E3 — Penyiaran Layar dan Suara** | [`e3-penyiaran-layar-suara.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e3-penyiaran-layar-suara.md) | MVP-inti | `[ ] Belum mulai` |
 | **E6 — Koneksi dan Mengakhiri Siaran** | [`e6-koneksi-mengakhiri-siaran.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e6-koneksi-mengakhiri-siaran.md) | MVP-inti | `[ ] Belum mulai` |
 | **E5 — Tombol Melayang dan Notifikasi** | [`e5-tombol-melayang-notifikasi.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e5-tombol-melayang-notifikasi.md) | MVP-lengkap | `[ ] Belum mulai` |
 | **E4 — Kamera Depan** | [`e4-kamera-depan.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e4-kamera-depan.md) | MVP-lengkap | `[ ] Belum mulai` |
+| **E7 - Kepatuhan & Rilis** | [`e7-kepatuhan-rilis.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e7-kepatuhan-rilis.md) | Rilis (App Review Facebook paralel sejak E1) | `[ ] Belum mulai` |
 
 ---
 
