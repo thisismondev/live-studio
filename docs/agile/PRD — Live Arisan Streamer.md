@@ -191,4 +191,5 @@ Ide-ide fitur yang ditunda untuk dikembangkan setelah fase MVP selesai:
 - **Live ke Facebook Page / Group**: Menambah dukungan penyiaran ke Halaman Bisnis dan Grup Facebook.
 - **Dukungan Platform Lain**: Penyiaran ke YouTube Live atau TikTok Live.
 - **Laporan Crash & Log Lokal**: Integrasi Firebase Crashlytics atau ekspor log lokal untuk troubleshooting.
+- **Fitur Firebase Pasca-MVP**: Firebase sudah terpasang (Google Services + BoM) tanpa Firebase Auth; Crashlytics dan Analytics ditambahkan setelah MVP selesai.
 - **Optimasi Tablet & Dual Screen**: Penyesuaian tata letak untuk perangkat tablet dan layar lipat.

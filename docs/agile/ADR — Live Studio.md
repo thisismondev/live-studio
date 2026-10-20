@@ -24,9 +24,9 @@ Sebagai **Junior Developer**, fokus utama kita adalah membuat aplikasi yang:
 |---|---|---|
 | **Bahasa** | Kotlin | Bahasa standar Android modern, ringkas, dan aman dari NullPointerException. |
 | **UI Framework** | Jetpack Compose + Material 3 | Mempermudah pembuatan UI secara deklaratif (Single Activity Architecture). |
-| **Arsitektur UI** | MVVM + Clean Architecture Sederhana | Memisahkan *Data Layer*, *Domain Layer*, dan *UI Layer*. |
+| **Arsitektur UI & DI** | MVVM + Clean Architecture + Dagger Hilt | Memisahkan *Data Layer*, *Domain Layer*, dan *UI Layer*. **Dagger Hilt** digunakan untuk Dependency Injection (DI) otomatis. |
 | **Target Android** | Min SDK 24 (Android 7.0) <br> Target SDK 37 | SDK 24 mencakup mayoritas HP pengguna arisan. Target SDK 37 memenuhi standar Google Play terbaru. |
-| **Autentikasi & API** | Firebase Auth + Facebook Login SDK | Digunakan untuk **Firebase Auth (Facebook Provider)**, memegang sesi user terpusat (Firebase UID), serta membuat sesi siaran via **Facebook Live Video API** (`GraphRequest`). |
+| **Autentikasi & API** | Facebook Login SDK | Digunakan untuk login Facebook dan mendapatkan **long-lived access token** dengan expiry asli (`AccessToken.expirationTime`), disimpan terenkripsi (Keystore). Identitas tunggal: `facebookUserId`. Membuat sesi siaran via **Facebook Live Video API** (`GraphRequest`). **Firebase Auth tidak dipakai**; Firebase tetap terpasang (Google Services + BoM) untuk fitur pasca-MVP seperti Crashlytics/Analytics. |
 | **Engine Streaming** | `RootEncoder` (pedroSG94) | Library open-source teruji untuk merekam layar (`MediaProjection`) dan mengirim stream RTMPS ke Facebook Live. |
 | **Kamera Depan** | CameraX | Mengakses kamera depan HP untuk overlay wajah penyiar saat siaran live. |
 | **Penyimpanan Lokal** | Jetpack DataStore (Preferences) | Untuk menyimpan pengaturan sederhana (tema gelap/terang, judul siaran terakhir, privasi terakhir). Tanpa database SQLite/Room. |
@@ -62,7 +62,7 @@ Aplikasi dibangun dengan pemisahan 3 layer utama agar kodenya rapi dan mudah dir
 ## 4. Alur Kerja Utama (Main Data Flow)
 
 1. **Alur Login**:
-   - Pengguna buka aplikasi -> Klik "Masuk dengan Facebook" -> `AuthRepository` memproses credential via Firebase Auth (`FacebookAuthProvider`) -> Sesi Firebase UID & Facebook Access Token tersimpan -> Masuk Beranda.
+   - Pengguna buka aplikasi -> Klik "Masuk dengan Facebook" -> `AuthRepository` memproses login via Facebook Login SDK (`LoginManager`) -> Facebook Access Token tersimpan terenkripsi, profil (`facebookUserId`, nama, foto) tersimpan di DataStore -> Masuk Beranda.
 2. **Alur Memulai Live**:
    - Pengguna isi Judul & Pilih Privasi (Publik/Teman).
    - Pengguna klik "Mulai Live".
@@ -121,7 +121,7 @@ Pengerjaan dibagi menjadi **Tahap Setup Awal** dan **Tahap Eksekusi Per Fitur (D
 Setiap fitur dieksekusi secara berurutan melewati **Data Layer**, **Domain Layer**, lalu **UI Layer**:
 
 #### 1. Fitur Login Facebook
-- **Data Layer**: Integrasi Firebase Auth + Facebook Login SDK, `AuthRepositoryImpl`, simpan token/sesi Firebase UID & Facebook AccessToken ke local DataStore.
+- **Data Layer**: Integrasi Facebook Login SDK, `AuthRepositoryImpl`, simpan Facebook AccessToken ke penyimpanan terenkripsi (`SecureTokenStorage`) dan profil non-sensitif ke DataStore. File token dikecualikan dari backup (`allowBackup="true"` dipertahankan). Refresh token berdasarkan expiry asli.
 - **Domain Layer**: Interface `AuthRepository`, `GetLoginStateUseCase`, `LoginFacebookUseCase`, `LogoutUseCase`.
 - **UI Layer**: `LoginViewModel`, `LoginScreen` (Compose) dengan tombol Facebook Login & penanganan UI State (Loading, Success, Error).
 
