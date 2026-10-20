@@ -27,7 +27,7 @@ Setiap berkas rencana eksekusi memuat checkbox terstruktur berdasarkan **Setup L
 | **E0 — Setup & Konfigurasi Core Proyek** | [`e0-setup-dan-konfigurasi.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e0-setup-dan-konfigurasi.md) | MVP-inti | `[x] Selesai` |
 | **E1 — Login Facebook via Facebook Login SDK** | [`e1-login-facebook.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e1-login-facebook.md) | MVP-inti | `[x] Selesai` |
 | **E2 — Persiapan Siaran** | [`e2-persiapan-siaran.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e2-persiapan-siaran.md) | MVP-inti | `[x] Selesai` |
-| **E3 — Penyiaran Layar dan Suara** | [`e3-penyiaran-layar-suara.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e3-penyiaran-layar-suara.md) | MVP-inti | `[ ] Belum mulai` |
+| **E3 — Penyiaran Layar dan Suara** | [`e3-penyiaran-layar-suara.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e3-penyiaran-layar-suara.md) | MVP-inti | `[/] Sedang berjalan` |
 | **E6 — Koneksi dan Mengakhiri Siaran** | [`e6-koneksi-mengakhiri-siaran.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e6-koneksi-mengakhiri-siaran.md) | MVP-inti | `[ ] Belum mulai` |
 | **E5 — Tombol Melayang dan Notifikasi** | [`e5-tombol-melayang-notifikasi.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e5-tombol-melayang-notifikasi.md) | MVP-lengkap | `[ ] Belum mulai` |
 | **E4 — Kamera Depan** | [`e4-kamera-depan.md`](file:///D:/RAQHIB%20ATAILLAH/MyProject/Mobile/LiveStudio/docs/plans/e4-kamera-depan.md) | MVP-lengkap | `[ ] Belum mulai` |
