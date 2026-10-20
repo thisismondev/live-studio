@@ -1,5 +1,16 @@
 # Changelog Rencana Eksekusi Live Studio
 
+## [E2] Fitur Persiapan Siaran (Prepare Live) - Selesai
+*Tanggal & Waktu: 21 Oktober 2026, 01:38 WIB*
+
+- Domain Layer: pembuatan model `PrivacyOption.kt`, `BroadcastConfig.kt`, hirarki exception `LiveErrors.kt`, interface `LiveRepository.kt`, serta UseCases (`CreateLiveStreamUseCase`, `GetBroadcastSettingsUseCase`, `SaveBroadcastSettingsUseCase`).
+- Data Layer: implementasi `FacebookLiveApi.kt` (`POST /me/live_videos` via GraphRequest Facebook SDK), `LiveRepositoryImpl.kt`, serta penambahan penyimpanan judul & privasi terakhir ke DataStore pada `PreferencesManager.kt`.
+- UI Layer: pembuatan alur navigasi Compose `AppNavigation.kt`, layar edukasi izin `PermissionsOverviewScreen.kt` dengan `PermissionHelper`, Beranda `HomeScreen.kt` + `HomeViewModel.kt`, dan `AccountRequirementBottomSheet.kt` untuk penanganan akun non-profesional.
+- Pembaruan `MainActivity.kt` menggunakan `AppNavigation` terpusat.
+- DI: Registrasi `LiveRepository` di `di/AppModule.kt`.
+- Pengujian dan verifikasi berhasil dilakukan di Android Studio.
+
+---
 ## [E1/Facebook SDK] Migrasi ke Facebook Login SDK & Verifikasi Emulator - Selesai
 *Tanggal & Waktu: 21 Oktober 2026, 01:00 WIB*
 

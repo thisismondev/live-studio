@@ -19,7 +19,7 @@ Mengimplementasikan alur persiapan siaran sebelum streaming dimulai, meliputi:
 
 ### Data Layer
 
-- [ ] **[NEW] `data/remote/FacebookLiveApi.kt`**
+- [x] **[NEW] `data/remote/FacebookLiveApi.kt`**
   - Menggunakan `GraphRequest` Facebook SDK dengan token dari sesi aktif.
   - Endpoint `POST /me/live_videos` dengan parameter:
     - `title`: Judul siaran.
@@ -29,79 +29,84 @@ Mengimplementasikan alur persiapan siaran sebelum streaming dimulai, meliputi:
   - Mengembalikan `Result<Pair<String, String>>` berisi `(secure_stream_url, live_video_id)`.
   - Parsing kesalahan Graph API spesifik untuk mendeteksi syarat akun / mode profesional.
 
-- [ ] **[REVISI] `data/local/PreferencesManager.kt`**
+- [x] **[REVISI] `data/local/PreferencesManager.kt`**
   - Menambahkan key DataStore untuk `last_broadcast_title` dan `last_privacy_option`.
   - Menambahkan fungsi `saveLastBroadcastSettings(title: String, privacy: String)` dan `getLastBroadcastSettings(): Flow<Pair<String, String>>`.
 
-- [ ] **[NEW] `data/repository/LiveRepositoryImpl.kt`**
+- [x] **[NEW] `data/repository/LiveRepositoryImpl.kt`**
   - Mengimplementasikan `LiveRepository`.
   - Memanggil `FacebookLiveApi.createLiveVideo(...)`.
-  - Menyimpan judul & privasi ke `PreferencesManager` saat siaran berhasil dibuat.
+  - Penyimpanan judul & privasi dilakukan `HomeViewModel` lewat `SaveBroadcastSettingsUseCase` setelah siaran berhasil dibuat (bukan di repository).
 
 ---
 
 ### Domain Layer
 
-- [ ] **[NEW] `domain/model/PrivacyOption.kt`**
+- [x] **[NEW] `domain/model/PrivacyOption.kt`**
   - Enum `PUBLIC("EVERYONE", "Publik")` dan `FRIENDS("ALL_FRIENDS", "Teman")`.
 
-- [ ] **[NEW] `domain/model/BroadcastConfig.kt`**
+- [x] **[NEW] `domain/model/BroadcastConfig.kt`**
   - Data class `title: String`, `privacy: PrivacyOption`, `rtmpsUrl: String`, `liveVideoId: String`.
 
-- [ ] **[NEW] `domain/repository/LiveRepository.kt`**
+- [x] **[NEW] `domain/repository/LiveRepository.kt`**
   - Interface contract:
     - `suspend fun createLiveStream(title: String, privacy: PrivacyOption): Result<BroadcastConfig>`
     - `suspend fun saveLastSettings(title: String, privacy: PrivacyOption)`
     - `fun getLastSettings(): Flow<Pair<String, PrivacyOption>>`
 
-- [ ] **[NEW] `domain/usecase/CreateLiveStreamUseCase.kt`**
+- [x] **[NEW] `domain/usecase/CreateLiveStreamUseCase.kt`**
   - Validasi judul siaran (tidak boleh kosong/hanya spasi).
   - Mengeksekusi `liveRepository.createLiveStream(...)`.
 
-- [ ] **[NEW] `domain/usecase/GetBroadcastSettingsUseCase.kt` & `SaveBroadcastSettingsUseCase.kt`**
+- [x] **[NEW] `domain/usecase/GetBroadcastSettingsUseCase.kt` & `SaveBroadcastSettingsUseCase.kt`**
   - UseCase untuk membaca dan menyimpan judul serta privasi terakhir.
 
 ---
 
 ### UI Layer & Navigation
 
-- [ ] **[NEW] `ui/navigation/Screen.kt` & `ui/navigation/AppNavigation.kt`**
+- [x] **[NEW] `ui/navigation/Screen.kt` & `ui/navigation/AppNavigation.kt`**
   - NavHost Compose mengatur rute:
     - `Screen.Login`
     - `Screen.Permissions`
     - `Screen.Home`
   - Mengecek sesi login awal: jika sudah login, cek status izin -> jika izin lengkap langsung ke `Home`, jika belum ke `Permissions`.
 
-- [ ] **[NEW] `ui/screens/permissions/PermissionsOverviewScreen.kt`**
+- [x] **[NEW] `ui/screens/permissions/PermissionsOverviewScreen.kt`**
   - Layar edukasi izin Material 3 (Audio, Notifikasi, Overlay) dengan bahasa ramah awam.
   - Kartu status izin interaktif dan tombol aksi "Beri Izin / Lanjut ke Beranda".
 
-- [ ] **[NEW] `ui/screens/home/HomeUiState.kt` & `ui/screens/home/HomeViewModel.kt`**
+- [x] **[NEW] `ui/screens/home/HomeUiState.kt` & `ui/screens/home/HomeViewModel.kt`**
   - StateFlow `HomeUiState` (`title`, `privacy`, `isLoading`, `errorMessage`, `showRequirementSheet`, `createdBroadcast: BroadcastConfig?`).
   - Fungsi input: `onTitleChanged(String)`, `onPrivacySelected(PrivacyOption)`, `onStartLiveClicked()`, `onDismissError()`.
 
-- [ ] **[NEW] `ui/screens/home/HomeScreen.kt`**
+- [x] **[NEW] `ui/screens/home/HomeScreen.kt`**
   - Header profil admin (avatar bulat, nama, dan tombol Logout).
   - Input teks judul siaran (`OutlinedTextField`, keyboard actions, IME padding).
   - Pilihan radio button / segmented chip untuk Privasi (Publik / Teman).
   - Tombol aksi utama "Mulai Live" dengan state Loading.
   - Dialog konfirmasi sukses "Siaran Siap Dimulai" menampilkan URL RTMPS untuk verifikasi E2.
 
-- [ ] **[NEW] `ui/screens/home/components/AccountRequirementBottomSheet.kt`**
+- [x] **[NEW] `ui/screens/home/components/AccountRequirementBottomSheet.kt`**
   - Modal Bottom Sheet panduan langkah aktivasi Mode Profesional Facebook dengan tombol "Coba Lagi" dan intent buka aplikasi Facebook.
 
 ---
 
 ### Dependency Injection (DI)
 
-- [ ] **[REVISI] `di/AppModule.kt`**
+- [x] **[REVISI] `di/AppModule.kt`**
   - Bind `LiveRepository` ke `LiveRepositoryImpl`.
 
 ---
 
+> **Catatan implementasi:** kode E2 telah selesai diimplementasikan, dikompilasi, dan diverifikasi di Android Studio.
+> - Avatar profil memakai huruf inisial (belum ada library gambar seperti Coil).
+> - Izin wajib sebelum Beranda: Mikrofon dan Overlay. Notifikasi opsional.
+> - Dialog sukses menyamarkan stream key pada URL RTMPS.
+> - `clearUserSession()` kini hanya menghapus kunci sesi, sehingga judul dan privasi terakhir tetap tersimpan setelah logout.
 ## 3. Verifikasi E2
-- [ ] Navigasi bekerja lancar: Pengguna login diarahkan ke Layar Izin (jika belum lengkap), lalu masuk ke Beranda.
-- [ ] Input judul tervalidasi dengan baik (tombol Mulai Live nonaktif atau memvalidasi jika judul kosong).
-- [ ] Pilihan privasi (Publik/Teman) dan judul siaran tersimpan serta dimuat kembali saat aplikasi dibuka ulang.
-- [ ] Pemanggilan API Facebook `POST /me/live_videos` berhasil mengembalikan URL RTMPS valid (`rtmps://...`) dan `live_video_id` nyata dari Facebook.
-- [ ] Penanganan error syarat akun / token kadaluwarsa menampilkan panduan ramah tanpa membuat crash aplikasi.
+- [x] Navigasi bekerja lancar: Pengguna login diarahkan ke Layar Izin (jika belum lengkap), lalu masuk ke Beranda.
+- [x] Input judul tervalidasi dengan baik (tombol Mulai Live nonaktif atau memvalidasi jika judul kosong).
+- [x] Pilihan privasi (Publik/Teman) dan judul siaran tersimpan serta dimuat kembali saat aplikasi dibuka ulang.
+- [x] Pemanggilan API Facebook `POST /me/live_videos` berhasil mengembalikan URL RTMPS valid (`rtmps://...`) dan `live_video_id` nyata dari Facebook.
+- [x] Penanganan error syarat akun / token kadaluwarsa menampilkan panduan ramah tanpa membuat crash aplikasi.

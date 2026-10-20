@@ -32,6 +32,8 @@ class PreferencesManager @Inject constructor(
         val USER_NAME = stringPreferencesKey("user_name")
         val USER_PHOTO_URL = stringPreferencesKey("user_photo_url")
         val TOKEN_EXPIRES_AT = longPreferencesKey("token_expires_at")
+        val LAST_BROADCAST_TITLE = stringPreferencesKey("last_broadcast_title")
+        val LAST_PRIVACY_OPTION = stringPreferencesKey("last_privacy_option")
     }
 
     val userSessionFlow: Flow<UserSession?> = context.dataStore.data.map { preferences ->
@@ -43,6 +45,18 @@ class PreferencesManager @Inject constructor(
             facebookAccessToken = secureTokenStorage.readToken() ?: return@map null,
             tokenExpiresAt = preferences[PreferencesKeys.TOKEN_EXPIRES_AT] ?: 0L
         )
+    }
+
+    val lastBroadcastSettingsFlow: Flow<Pair<String, String>> = context.dataStore.data.map { preferences ->
+        (preferences[PreferencesKeys.LAST_BROADCAST_TITLE] ?: "") to
+            (preferences[PreferencesKeys.LAST_PRIVACY_OPTION] ?: "EVERYONE")
+    }
+
+    suspend fun saveLastBroadcastSettings(title: String, privacy: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_BROADCAST_TITLE] = title
+            preferences[PreferencesKeys.LAST_PRIVACY_OPTION] = privacy
+        }
     }
 
     suspend fun saveUserSession(userSession: UserSession) {
@@ -62,7 +76,10 @@ class PreferencesManager @Inject constructor(
     suspend fun clearUserSession() {
         secureTokenStorage.clear()
         context.dataStore.edit { preferences ->
-            preferences.clear()
+            preferences.remove(PreferencesKeys.FB_USER_ID)
+            preferences.remove(PreferencesKeys.USER_NAME)
+            preferences.remove(PreferencesKeys.USER_PHOTO_URL)
+            preferences.remove(PreferencesKeys.TOKEN_EXPIRES_AT)
         }
     }
 }
