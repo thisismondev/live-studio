@@ -27,7 +27,7 @@ Sebagai **Junior Developer**, fokus utama kita adalah membuat aplikasi yang:
 | **Arsitektur UI & DI** | MVVM + Clean Architecture + Dagger Hilt | Memisahkan *Data Layer*, *Domain Layer*, dan *UI Layer*. **Dagger Hilt** digunakan untuk Dependency Injection (DI) otomatis. |
 | **Target Android** | Min SDK 24 (Android 7.0) <br> Target SDK 37 | SDK 24 mencakup mayoritas HP pengguna arisan. Target SDK 37 memenuhi standar Google Play terbaru. |
 | **Autentikasi & API** | Facebook Login SDK | Digunakan untuk login Facebook dan mendapatkan **long-lived access token** dengan expiry asli (`AccessToken.expirationTime`), disimpan terenkripsi (Keystore). Identitas tunggal: `facebookUserId`. Membuat sesi siaran via **Facebook Live Video API** (`GraphRequest`). **Firebase Auth tidak dipakai**; Firebase tetap terpasang (Google Services + BoM) untuk fitur pasca-MVP seperti Crashlytics/Analytics. |
-| **Engine Streaming** | `RootEncoder` (pedroSG94) | Library open-source teruji untuk merekam layar (`MediaProjection`) dan mengirim stream RTMPS ke Facebook Live. |
+| **Engine Streaming** | `RootEncoder` (pedroSG94) **2.8.1** dengan `GenericStream` + `ScreenSource` | Library open-source untuk merekam layar (`MediaProjection`) dan mengirim stream RTMPS ke Facebook Live. Sumber video dapat diganti saat siaran berjalan (`changeVideoSource`), sehingga berbagi layar bisa dijeda dan dipindah ke aplikasi lain tanpa memulai siaran baru. |
 | **Kamera Depan** | CameraX | Mengakses kamera depan HP untuk overlay wajah penyiar saat siaran live. |
 | **Penyimpanan Lokal** | Jetpack DataStore (Preferences) | Untuk menyimpan pengaturan sederhana (tema gelap/terang, judul siaran terakhir, privasi terakhir). Tanpa database SQLite/Room. |
 | **Background Execution** | Foreground Service (`StreamService`) | Agar siaran layar tetap berjalan stabil di latar belakang saat pengguna berpindah ke aplikasi spin wheel/browser. |
@@ -87,7 +87,7 @@ Aplikasi dibangun dengan pemisahan 3 layer utama agar kodenya rapi dan mudah dir
 | Fitur / Izin | Keterangan & Batasan |
 |---|---|
 | **Izin Overlay (`SYSTEM_ALERT_WINDOW`)** | Pengguna harus memberikan izin secara manual di Pengaturan HP agar gelembung melayang & kotak kamera dapat muncul. |
-| **Izin Screen Record (`MediaProjection`)** | Dialog sistem akan muncul setiap kali siaran akan dimulai. Pengguna wajib memilih **"Seluruh Layar" (Entire Screen)** di Android 14+ agar aplikasi lain ikut tersiar. |
+| **Izin Screen Record (`MediaProjection`)** | Dialog sistem akan muncul setiap kali siaran akan dimulai (dan setiap kali pengguna mengganti aplikasi yang dibagikan). Di Android 14+ pengguna bebas memilih **"Bagikan satu aplikasi"** (seperti Zoom/Discord) atau **"Seluruh layar"**; daftar aplikasi digambar oleh sistem dan tidak dapat dikustomisasi. Di Android 7-13 hanya tersedia seluruh layar. Aplikasi menampilkan panduan singkat sebelum dialog muncul. |
 | **Suara Aplikasi Internal (`AudioPlaybackCapture`)** | Hanya tersedia di **Android 10 (API 29) ke atas**. Pada Android 7-9, aplikasi akan menampilkan notifikasi bahwa hanya suara mikrofon yang bisa direkam. |
 | **Foreground Service Type** | Wajib mendeklarasikan tipe service pada `AndroidManifest.xml`: `mediaProjection`, `microphone`, dan `camera` untuk memenuhi standar Android 14+. |
 

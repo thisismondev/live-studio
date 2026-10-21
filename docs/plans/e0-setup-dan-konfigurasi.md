@@ -18,7 +18,7 @@ Menyiapkan seluruh dependensi pustaka (termasuk **Dagger Hilt** untuk Dependency
     - `googleGmsGoogleServices = "4.5.0"`
     - `firebaseBom` (Firebase BoM, tetap dipasang untuk fitur pasca-MVP)
     - `facebookLogin` (Facebook Login SDK)
-    - `rootEncoder = "2.4.9"` (pedroSG94)
+    - `rootEncoder = "2.8.1"` (pedroSG94; sebelumnya `2.4.9`, dinaikkan di revisi E3)
     - `camerax = "1.4.1"`
     - `datastore = "1.1.2"`
     - `navigationCompose = "2.8.7"`

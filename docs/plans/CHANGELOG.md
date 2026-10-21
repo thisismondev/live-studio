@@ -1,5 +1,15 @@
 # Changelog Rencana Eksekusi Live Studio
 
+## [Docs/E3] Revisi Rencana: Berbagi Aplikasi Pilihan ala Zoom/Discord (belum ada perubahan kode)
+*Tanggal & Waktu: 21 Oktober 2026, 08:50 WIB*
+
+- E3 dibuka kembali (`[ ] Direvisi`): pengguna memilih aplikasi yang dibagikan lewat dialog sistem Android 14+ ("Bagikan satu aplikasi"); aplikasi tidak memaksa pilihan dan menampilkan panduan singkat sebelum dialog.
+- Siaran tetap hidup saat berbagi layar berhenti; penonton melihat "Berbagi layar dijeda" (status baru `ScreenPaused`) dan pengguna dapat memilih aplikasi lain lewat `StreamStatusScreen` atau notifikasi.
+- Engine direncanakan bermigrasi dari `RtmpDisplay` (RootEncoder 2.4.9) ke `GenericStream` + `ScreenSource` (RootEncoder **2.8.1**; nama API diverifikasi lewat build).
+- ADR diperbarui: kewajiban "Seluruh Layar" dihapus, engine streaming dicatat ulang.
+- Kode E3 yang sudah ada belum diubah dan belum diuji di perangkat.
+
+---
 ## [E2] Fitur Persiapan Siaran (Prepare Live) - Selesai
 *Tanggal & Waktu: 21 Oktober 2026, 01:38 WIB*
 

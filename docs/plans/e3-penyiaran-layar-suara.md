@@ -1,5 +1,6 @@
 # Rencana Eksekusi: E3 - Core Streaming Engine (Penyiaran Layar & Suara)
 
+> **Status: [ ] Direvisi.** Implementasi awal memakai `RtmpDisplay` (RootEncoder 2.4.9) dan mengasumsikan berbagi layar penuh. Rencana direvisi agar pengguna dapat **memilih aplikasi yang dibagikan** (seperti Zoom/Discord) dan menggantinya saat siaran berjalan. Kode yang ada akan disesuaikan pada tahap implementasi; item yang terdampak dikembalikan menjadi belum.
 Dokumen ini berisi rencana teknis per file untuk tahapan **Core Streaming Engine (Penyiaran Layar & Suara)**.
 
 ---
@@ -23,6 +24,14 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
   - Jika koneksi RTMPS terputus di tengah siaran (misal sinyal seluler drop), engine otomatis mencoba menyambung ulang (*auto-reconnect*) hingga **5 kali percobaan** dengan jeda waktu 3 detik per percobaan.
   - Status UI dan Notifikasi menampilkan pesan **"Menghubungkan Ulang... (x/5)"**.
   - Jika setelah 5 kali tetap gagal, siaran otomatis diakhiri dan status kesalahan ditampilkan ke pengguna.
+- **Berbagi Aplikasi Pilihan (ala Zoom/Discord)**:
+  - Pemilih aplikasi disediakan **sistem Android**. Di Android 14+ dialog izin menawarkan "Bagikan satu aplikasi" atau "Seluruh layar"; daftar aplikasi tidak dapat dikustomisasi. Di Android 7-13 hanya tersedia seluruh layar.
+  - Aplikasi **tidak memaksa** pilihan. Sebelum dialog sistem muncul, ditampilkan panduan singkat: *"Pilih aplikasi undian Anda"*.
+  - Urutan saat **Mulai Live**: Facebook API membuat siaran -> panduan -> dialog pemilih sistem -> siaran terhubung dengan aplikasi terpilih. Penonton tidak melihat layar kosong di awal.
+  - Jika berbagi layar berhenti di tengah siaran (aplikasi ditutup atau pengguna menghentikan berbagi dari sistem), **siaran Facebook tetap hidup** dan penonton melihat gambar **"Berbagi layar dijeda"**. Pengguna dapat memilih aplikasi lain lagi tanpa memulai siaran baru.
+  - Pengguna memilih atau mengganti aplikasi lewat tombol **"Pilih Aplikasi"** di `StreamStatusScreen` dan tombol aksi **"Ganti Aplikasi"** di notifikasi siaran. Tombol melayang menyusul di E5. Keduanya membuka dialog sistem lagi.
+  - Aplikasi yang dibagikan harus tetap tampil di depan agar tersiar.
+- **Migrasi Engine ke `GenericStream`**: RootEncoder dinaikkan ke **2.8.1** (versi terbaru menurut dokumentasi resmi). `StreamService` berpindah dari `RtmpDisplay` ke `GenericStream` dengan `ScreenSource`. Saat dijeda, sumber video diganti ke gambar placeholder; saat aplikasi baru dipilih, diganti ke `ScreenSource` baru. Nama API tetap diverifikasi lewat build di Android Studio karena dokumentasi dan kode lama berbeda antar versi. Migrasi ini juga memudahkan overlay kamera di E4.
 - **Alur Transisi UI**:
   - Klik "Mulai Live" di `HomeScreen` -> pemicu izin sistem `MediaProjection` (Pengguna wajib memilih "Seluruh Layar" / *Entire Screen*).
   - Navigasi berpindah ke **`StreamStatusScreen`** (Layar Status Siaran) yang menampilkan badge LIVE merah, timer siaran berjalan, status bitrate, tombol kontrol audio, dan tombol "Stop Live".
@@ -54,7 +63,7 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
   - Singleton manager penyedia `StateFlow<StreamStatus>`.
   - Jembatan kontrol antara ViewModel dan `StreamService` untuk perintah start, stop, mute mic, dan mute internal audio.
 
-- [ ] **[REVISI] `data/local/PreferencesManager.kt`**
+- [x] **[REVISI] `data/local/PreferencesManager.kt`**
   - Menambahkan key `video_quality_profile` untuk menyimpan profil resolusi yang dipilih.
 
 ---
@@ -66,14 +75,15 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
     - `data object Idle : StreamStatus`
     - `data object Connecting : StreamStatus`
     - `data class Streaming(val durationSeconds: Long, val bitrateKbps: Int, val isMicMuted: Boolean, val isAppAudioMuted: Boolean) : StreamStatus`
+    - `data class ScreenPaused(val durationSeconds: Long, val bitrateKbps: Int) : StreamStatus` (siaran hidup, berbagi layar dijeda)
     - `data class Reconnecting(val attempt: Int, val maxAttempts: Int) : StreamStatus`
     - `data class Stopped(val summaryDurationSeconds: Long) : StreamStatus`
     - `data class Error(val message: String) : StreamStatus`
 
-- [ ] **[NEW] `domain/model/VideoQualityProfile.kt`**
+- [x] **[NEW] `domain/model/VideoQualityProfile.kt`**
   - Enum `AUTO_720P` (720x1280, 2500 kbps, Label: "Otomatis (720p)"), `SAVER_480P` (480x854, 1200 kbps, Label: "Hemat Data (480p)"), `HIGH_1080P` (1080x1920, 4000 kbps, Label: "Tinggi (1080p)").
 
-- [ ] **[NEW] `domain/repository/StreamRepository.kt`**
+- [x] **[NEW] `domain/repository/StreamRepository.kt`**
   - Interface contract:
     - `val streamStatus: StateFlow<StreamStatus>`
     - `fun startStream(resultCode: Int, data: Intent, rtmpsUrl: String, quality: VideoQualityProfile)`
@@ -81,14 +91,14 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
     - `fun toggleMic(mute: Boolean)`
     - `fun toggleAppAudio(mute: Boolean)`
 
-- [ ] **[NEW] `domain/usecase/StartStreamUseCase.kt`, `StopStreamUseCase.kt`, `ToggleAudioUseCase.kt`, `GetStreamStatusUseCase.kt`**
+- [x] **[NEW] `domain/usecase/StartStreamUseCase.kt`, `StopStreamUseCase.kt`, `ToggleAudioUseCase.kt`, `GetStreamStatusUseCase.kt`**
   - UseCases pembungkus aksi streaming untuk UI.
 
 ---
 
 ### UI Layer & Navigation
 
-- [ ] **[REVISI] `ui/navigation/Screen.kt` & `AppNavigation.kt`**
+- [x] **[REVISI] `ui/navigation/Screen.kt` & `AppNavigation.kt`**
   - Menambahkan rute `Screen.StreamStatus` (`"stream_status"`).
   - Navigasi otomatis dari `Home` ke `StreamStatus` setelah `MediaProjection` disetujui.
   - Navigasi kembali ke `Home` saat siaran dihentikan / selesai.
@@ -113,13 +123,41 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
 
 ---
 
+### Revisi untuk Berbagi Aplikasi Pilihan
+
+- [ ] **[REVISI] `gradle/libs.versions.toml`**
+  - Naikkan `rootEncoder` dari `2.4.9` ke `2.8.1`.
+  - Opsional, belum dipakai di E3: `com.github.pedroSG94.RootEncoder:extra-sources:2.8.1` (menyediakan `CameraXSource` dan `CameraUvcSource`, relevan untuk kamera depan di E4).
+
+- [ ] **[REVISI] `service/StreamService.kt`**
+  - Ganti `RtmpDisplay` dengan `GenericStream` + `ScreenSource` + sumber audio (mikrofon dan audio internal).
+  - Daftarkan `MediaProjection.Callback`; saat `onStop`, ganti sumber video ke placeholder "Berbagi layar dijeda" dan ubah status ke `ScreenPaused` (jangan hentikan RTMP).
+  - Aksi baru `ACTION_UPDATE_PROJECTION` (menerima hasil dialog sistem yang baru) untuk mengganti ke `ScreenSource` baru.
+  - Pastikan token `MediaProjection` dibuat setelah `startForeground` (Android 14+).
+
+- [ ] **[NEW] `res/drawable/screen_paused_placeholder` (atau Bitmap yang dirender dari teks)**
+  - Gambar "Berbagi layar dijeda" untuk penonton.
+
+- [ ] **[REVISI] `core/service/NotificationHelper.kt`**
+  - Tambahkan tombol aksi "Ganti Aplikasi" yang membuka layar status dan memicu dialog pemilih sistem.
+
+- [ ] **[NEW] `ui/screens/home/components/ShareGuidanceDialog.kt`**
+  - Panduan singkat "Pilih aplikasi undian Anda" sebelum dialog sistem. Di Android 7-13 teksnya menyesuaikan (hanya seluruh layar tersedia).
+
+- [ ] **[REVISI] `ui/screens/status/StreamStatusScreen.kt` & `StreamStatusViewModel.kt`**
+  - Tombol "Pilih Aplikasi" / "Ganti Aplikasi" yang memicu `createScreenCaptureIntent()`.
+  - Tampilan status `ScreenPaused` (badge "DIJEDA" dan ajakan memilih aplikasi).
+
+---
+
 ### Konfigurasi AndroidManifest
 
-- [ ] **[REVISI] `AndroidManifest.xml`**
+- [x] **[REVISI] `AndroidManifest.xml`**
   - Deklarasikan `<service android:name=".service.StreamService" android:foregroundServiceType="mediaProjection|microphone" android:exported="false" />`.
 
 ---
 
+> **Catatan implementasi:** kode E3 versi awal (`RtmpDisplay`, berbagi layar penuh) sudah ditulis tetapi **belum dikompilasi atau diuji di perangkat**, dan akan direvisi sesuai bagian "Revisi untuk Berbagi Aplikasi Pilihan" di atas.
 ## 3. Verifikasi E3
 - [ ] Dialog sistem `MediaProjection` muncul dengan benar saat Mulai Live ditekan.
 - [ ] Foreground service `StreamService` aktif dengan notifikasi persisten di system bar.
@@ -128,3 +166,7 @@ Mengintegrasikan **MediaProjection** (perekaman layar) dan **RootEncoder (pedroS
 - [ ] Mute Mikrofon dan Mute Suara Aplikasi berfungsi secara independen.
 - [ ] Auto-reconnect aktif saat simulasi kehilangan sinyal internet.
 - [ ] Tombol "Stop Live" menghentikan encoder dan foreground service secara bersih tanpa memory leak.
+- [ ] Android 14+: dialog sistem menawarkan "Bagikan satu aplikasi"; siaran hanya menampilkan aplikasi terpilih.
+- [ ] Menutup aplikasi yang dibagikan membuat penonton melihat "Berbagi layar dijeda" tanpa mengakhiri siaran Facebook.
+- [ ] Memilih aplikasi baru dari `StreamStatusScreen` atau notifikasi melanjutkan siaran yang sama.
+- [ ] Android 7-13: alur tetap berjalan dengan berbagi seluruh layar.
