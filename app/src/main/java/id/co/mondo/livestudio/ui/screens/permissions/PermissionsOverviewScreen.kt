@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
@@ -83,7 +84,8 @@ fun PermissionsOverviewScreen(
     val audioGranted = remember(refreshTick) { PermissionHelper.hasAudio(context) }
     val notificationGranted = remember(refreshTick) { PermissionHelper.hasNotification(context) }
     val overlayGranted = remember(refreshTick) { PermissionHelper.hasOverlay(context) }
-    val canContinue = audioGranted && overlayGranted
+    val usageAccessGranted = remember(refreshTick) { PermissionHelper.hasUsageAccess(context) }
+    val canContinue = audioGranted && overlayGranted && usageAccessGranted
 
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -136,6 +138,27 @@ fun PermissionsOverviewScreen(
                             Uri.parse("package:${context.packageName}")
                         )
                     )
+                }
+            )
+            PermissionCard(
+                icon = Icons.Default.Lock,
+                title = stringResource(R.string.perm_usage_title),
+                description = stringResource(R.string.perm_usage_desc),
+                granted = usageAccessGranted,
+                onGrant = {
+                    val intent = try {
+                        Intent(
+                            Settings.ACTION_USAGE_ACCESS_SETTINGS,
+                            Uri.parse("package:${context.packageName}")
+                        )
+                    } catch (_: Exception) {
+                        Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                    }
+                    try {
+                        context.startActivity(intent)
+                    } catch (_: Exception) {
+                        context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                    }
                 }
             )
 

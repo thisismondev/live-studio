@@ -9,9 +9,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import id.co.mondo.livestudio.core.util.Constants
+import id.co.mondo.livestudio.domain.model.ShareModeType
+import id.co.mondo.livestudio.domain.model.TargetApp
 import id.co.mondo.livestudio.domain.model.UserSession
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,6 +35,10 @@ class PreferencesManager @Inject constructor(
         val TOKEN_EXPIRES_AT = longPreferencesKey("token_expires_at")
         val LAST_BROADCAST_TITLE = stringPreferencesKey("last_broadcast_title")
         val LAST_PRIVACY_OPTION = stringPreferencesKey("last_privacy_option")
+        val LAST_VIDEO_QUALITY = stringPreferencesKey("last_video_quality")
+        val LAST_SHARE_MODE = stringPreferencesKey("last_share_mode")
+        val LAST_TARGET_APP_PKG = stringPreferencesKey("last_target_app_pkg")
+        val LAST_TARGET_APP_NAME = stringPreferencesKey("last_target_app_name")
     }
 
     val userSessionFlow: Flow<UserSession?> = context.dataStore.data.map { preferences ->
@@ -50,6 +55,38 @@ class PreferencesManager @Inject constructor(
     val lastBroadcastSettingsFlow: Flow<Pair<String, String>> = context.dataStore.data.map { preferences ->
         (preferences[PreferencesKeys.LAST_BROADCAST_TITLE] ?: "") to
             (preferences[PreferencesKeys.LAST_PRIVACY_OPTION] ?: "EVERYONE")
+    }
+
+    val lastVideoQualityFlow: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.LAST_VIDEO_QUALITY] ?: "AUTO_720P"
+    }
+
+    val lastShareSettingsFlow: Flow<Pair<ShareModeType, TargetApp?>> = context.dataStore.data.map { preferences ->
+        val mode = ShareModeType.fromName(preferences[PreferencesKeys.LAST_SHARE_MODE])
+        val pkg = preferences[PreferencesKeys.LAST_TARGET_APP_PKG]
+        val name = preferences[PreferencesKeys.LAST_TARGET_APP_NAME]
+        val targetApp = if (!pkg.isNullOrBlank() && !name.isNullOrBlank()) {
+            TargetApp(packageName = pkg, appName = name)
+        } else {
+            null
+        }
+        mode to targetApp
+    }
+
+    suspend fun saveLastVideoQuality(quality: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_VIDEO_QUALITY] = quality
+        }
+    }
+
+    suspend fun saveLastShareSettings(mode: ShareModeType, targetApp: TargetApp?) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_SHARE_MODE] = mode.name
+            if (targetApp != null) {
+                preferences[PreferencesKeys.LAST_TARGET_APP_PKG] = targetApp.packageName
+                preferences[PreferencesKeys.LAST_TARGET_APP_NAME] = targetApp.appName
+            }
+        }
     }
 
     suspend fun saveLastBroadcastSettings(title: String, privacy: String) {

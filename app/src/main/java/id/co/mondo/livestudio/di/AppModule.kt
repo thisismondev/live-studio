@@ -8,6 +8,8 @@ import id.co.mondo.livestudio.data.repository.AuthRepositoryImpl
 import id.co.mondo.livestudio.data.repository.LiveRepositoryImpl
 import id.co.mondo.livestudio.domain.repository.AuthRepository
 import id.co.mondo.livestudio.domain.repository.LiveRepository
+import id.co.mondo.livestudio.domain.repository.StreamRepository
+import id.co.mondo.livestudio.data.repository.StreamRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -25,4 +27,10 @@ abstract class AppModule {
     abstract fun bindLiveRepository(
         liveRepositoryImpl: LiveRepositoryImpl
     ): LiveRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStreamRepository(
+        streamRepositoryImpl: StreamRepositoryImpl
+    ): StreamRepository
 }

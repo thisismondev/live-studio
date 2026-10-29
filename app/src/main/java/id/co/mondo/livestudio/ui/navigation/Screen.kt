@@ -4,4 +4,5 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object Permissions : Screen("permissions")
     data object Home : Screen("home")
+    data object StreamStatus : Screen("stream_status")
 }

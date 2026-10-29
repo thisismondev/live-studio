@@ -3,7 +3,9 @@ package id.co.mondo.livestudio.ui.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import id.co.mondo.livestudio.domain.model.StreamStatus
 import id.co.mondo.livestudio.domain.usecase.GetLoginStateUseCase
+import id.co.mondo.livestudio.domain.usecase.GetStreamStatusUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -18,7 +20,8 @@ sealed interface SessionState {
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    getLoginStateUseCase: GetLoginStateUseCase
+    getLoginStateUseCase: GetLoginStateUseCase,
+    getStreamStatusUseCase: GetStreamStatusUseCase
 ) : ViewModel() {
 
     val sessionState: StateFlow<SessionState> = getLoginStateUseCase()
@@ -28,4 +31,7 @@ class AppViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = SessionState.Loading
         )
+
+    /** Dipakai untuk kembali ke layar status bila aplikasi dibuka ulang saat siaran masih berjalan. */
+    val streamStatus: StateFlow<StreamStatus> = getStreamStatusUseCase()
 }

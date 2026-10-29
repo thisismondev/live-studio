@@ -1,6 +1,5 @@
 package id.co.mondo.livestudio.ui.navigation
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,11 +17,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import id.co.mondo.livestudio.R
 import id.co.mondo.livestudio.core.util.PermissionHelper
+import id.co.mondo.livestudio.domain.model.isActive
 import id.co.mondo.livestudio.ui.screens.home.HomeScreen
 import id.co.mondo.livestudio.ui.screens.login.LoginScreen
 import id.co.mondo.livestudio.ui.screens.permissions.PermissionsOverviewScreen
+import id.co.mondo.livestudio.ui.screens.status.StreamStatusScreen
 
 @Composable
 fun AppNavigation(
@@ -33,7 +33,6 @@ fun AppNavigation(
     val navController = rememberNavController()
     val sessionState by appViewModel.sessionState.collectAsState()
 
-    // Tujuan awal ditentukan sekali, saat status sesi pertama kali diketahui.
     var startDestination by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(sessionState) {
@@ -41,10 +40,10 @@ fun AppNavigation(
             SessionState.Loading -> Unit
             SessionState.LoggedIn -> {
                 if (startDestination == null) {
-                    startDestination = if (PermissionHelper.hasRequired(context)) {
-                        Screen.Home.route
-                    } else {
-                        Screen.Permissions.route
+                    startDestination = when {
+                        appViewModel.streamStatus.value.isActive() -> Screen.StreamStatus.route
+                        PermissionHelper.hasRequired(context) -> Screen.Home.route
+                        else -> Screen.Permissions.route
                     }
                 }
             }
@@ -52,7 +51,6 @@ fun AppNavigation(
                 if (startDestination == null) {
                     startDestination = Screen.Login.route
                 } else if (navController.currentDestination?.route != Screen.Login.route) {
-                    // Logout atau sesi berakhir: kembali ke Login dan bersihkan back stack.
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -104,12 +102,16 @@ fun AppNavigation(
         composable(Screen.Home.route) {
             HomeScreen(
                 onStartBroadcast = {
-                    // Penyiaran layar dikerjakan di E3.
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.broadcast_pending_toast),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    navController.navigate(Screen.StreamStatus.route)
+                }
+            )
+        }
+        composable(Screen.StreamStatus.route) {
+            StreamStatusScreen(
+                onStreamFinished = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
                 }
             )
         }
