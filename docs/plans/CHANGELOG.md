@@ -1,13 +1,28 @@
 # Changelog Rencana Eksekusi Live Studio
 
-## [Docs/E3] Revisi Rencana: Berbagi Aplikasi Pilihan ala Zoom/Discord (belum ada perubahan kode)
-*Tanggal & Waktu: 21 Oktober 2026, 08:50 WIB*
+## [E3] Core Streaming Engine (Penyiaran Layar & Suara) - Selesai
+*Tanggal & Waktu: 21 Oktober 2026, 12:45 WIB*
 
-- E3 dibuka kembali (`[ ] Direvisi`): pengguna memilih aplikasi yang dibagikan lewat dialog sistem Android 14+ ("Bagikan satu aplikasi"); aplikasi tidak memaksa pilihan dan menampilkan panduan singkat sebelum dialog.
-- Siaran tetap hidup saat berbagi layar berhenti; penonton melihat "Berbagi layar dijeda" (status baru `ScreenPaused`) dan pengguna dapat memilih aplikasi lain lewat `StreamStatusScreen` atau notifikasi.
-- Engine direncanakan bermigrasi dari `RtmpDisplay` (RootEncoder 2.4.9) ke `GenericStream` + `ScreenSource` (RootEncoder **2.8.1**; nama API diverifikasi lewat build).
-- ADR diperbarui: kewajiban "Seluruh Layar" dihapus, engine streaming dicatat ulang.
-- Kode E3 yang sudah ada belum diubah dan belum diuji di perangkat.
+- **Streaming Engine**:
+  - Mengintegrasikan RootEncoder 2.8.1 (`GenericStream`, `ScreenSource`, `MixAudioSource`, `BitrateAdapter`).
+  - Menyiarkan layar HP secara mulus ke Facebook Live dengan adaptive bitrate dinamis dan auto-reconnect (hingga 5x percobaan).
+  - Kontrol audio independen: sakelar mute mikrofon dan mute audio aplikasi internal (Android 10+).
+- **Mode Berbagi Layar (Seluruh Layar vs Aplikasi)**:
+  - Dua opsi penyiaran di Beranda: **Seluruh Layar** (*Entire Screen*) dan **Aplikasi** (*Specific App*).
+  - *In-App App Picker Bottom Sheet*: daftar aplikasi berpeluncur (*Launcher Apps*) dengan kolom pencarian instan (*Search Bar*), ikon resmi, dan riwayat aplikasi terakhir via DataStore.
+- **Sensor Privasi Otomatis (*Privacy Guard*)**:
+  - Pemantauan foreground package via `UsageStatsManager` (`PACKAGE_USAGE_STATS`) setiap 500ms.
+  - Saat host keluar dari aplikasi target (membuka WhatsApp, chat pribadi, galeri, atau ke Home): video otomatis ditutup lapisan OpenGL `ImageObjectFilterRender` (*"Siaran Layar Dijeda"*) tanpa merusak sesi `VirtualDisplay` Android 14+.
+  - Mikrofon tetap aktif menyiarkan suara host saat layar dijeda; audio internal aplikasi lain otomatis dibisukan agar suara chat tidak bocor.
+  - Lapisan jeda dilepas seketika (<16ms) begitu host kembali membuka aplikasi target.
+  - Menggunakan *in-memory cached bitmap* untuk mencegah alokasi memori berlebih saat jeda/lanjut berulang kali.
+- **Alur Peluncuran & Kontrol Siaran**:
+  - Auto-launch aplikasi target ke layar depan saat live terhubung.
+  - Layar status `StreamStatusScreen` dengan penanda LIVE, durasi JJ:MM:DD, indikator bitrate, kontrol audio, tombol buka aplikasi, dan tombol Stop.
+  - Tombol "Ganti Aplikasi / Mode Layar" di layar status dan notifikasi memungkinkan host berganti aplikasi di tengah live tanpa memutus sesi Facebook Live.
+- **Perizinan & Kepatuhan**:
+  - Menambahkan kartu izin "Deteksi Aplikasi (Sensor Privasi)" di `PermissionsOverviewScreen`.
+  - Deklarasi `<queries>` intent Launcher di `AndroidManifest.xml` untuk kompatibilitas package visibility Android 11+.
 
 ---
 ## [E2] Fitur Persiapan Siaran (Prepare Live) - Selesai

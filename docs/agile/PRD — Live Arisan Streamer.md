@@ -71,7 +71,11 @@ Admin arisan perorangan yang mengundi arisan lewat Facebook Live tidak bisa memb
 - FR-08: Sistem **shall** menampilkan pesan yang jelas bila akun tidak memenuhi syarat live Facebook (usia akun, mode profesional, jumlah pengikut) atau bila pembuatan siaran gagal.
 
 **Penyiaran layar dan suara**
-- FR-09: Sistem **shall** menangkap layar perangkat (termasuk saat berpindah ke aplikasi lain) dan menyiarkannya ke Facebook.
+- FR-09: Sistem **shall** menangkap layar perangkat dan menyiarkannya ke Facebook Live melalui RTMPS.
+- FR-09a: Sistem **shall** menyediakan pilihan mode penyiaran: **Seluruh Layar** (*Entire Screen*) atau **Aplikasi Tertentu** (*Specific Application*).
+- FR-09b: Pada mode Aplikasi Tertentu, sistem **shall** menyediakan pemilih aplikasi dari daftar aplikasi berpeluncur (*Launcher Apps*) dengan kolom pencarian dan mengingat aplikasi terakhir yang dipilih.
+- FR-09c: Pada mode Aplikasi Tertentu, sistem **shall** otomatis meluncurkan aplikasi target setelah siaran terhubung, dan otomatis menyensor tampilan video dengan gambar jeda privasi (*Privacy Guard*) saat pengguna keluar dari aplikasi tersebut (suara mikrofon tetap tersiar).
+- FR-09d: Sistem **shall** memungkinkan pengguna mengganti aplikasi target di tengah siaran yang sedang berjalan tanpa memutus sesi live.
 - FR-10: Sistem **shall** menangkap suara mikrofon dan menyiarkannya.
 - FR-11: Sistem **shall** menangkap suara dari aplikasi yang dibagikan di Android 10 (API 29) ke atas.
 - FR-12: Sistem **shall** menampilkan pemberitahuan di perangkat Android 7–9 bahwa suara aplikasi tidak tersedia dan hanya suara mikrofon yang disiarkan.

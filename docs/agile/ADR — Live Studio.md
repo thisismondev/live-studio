@@ -87,7 +87,8 @@ Aplikasi dibangun dengan pemisahan 3 layer utama agar kodenya rapi dan mudah dir
 | Fitur / Izin | Keterangan & Batasan |
 |---|---|
 | **Izin Overlay (`SYSTEM_ALERT_WINDOW`)** | Pengguna harus memberikan izin secara manual di Pengaturan HP agar gelembung melayang & kotak kamera dapat muncul. |
-| **Izin Screen Record (`MediaProjection`)** | Dialog sistem akan muncul setiap kali siaran akan dimulai (dan setiap kali pengguna mengganti aplikasi yang dibagikan). Di Android 14+ pengguna bebas memilih **"Bagikan satu aplikasi"** (seperti Zoom/Discord) atau **"Seluruh layar"**; daftar aplikasi digambar oleh sistem dan tidak dapat dikustomisasi. Di Android 7-13 hanya tersedia seluruh layar. Aplikasi menampilkan panduan singkat sebelum dialog muncul. |
+| **Izin Screen Record (`MediaProjection`)** | Dialog sistem muncul saat memulai siaran. Pengguna dapat memilih mode **"Seluruh Layar"** atau **"Aplikasi Tertentu"** di Live Studio. Pada mode Aplikasi Tertentu, sistem menyaring tampilan dengan sensor jeda otomatis (*Privacy Guard*) dan otomatis meluncurkan aplikasi terpilih. |
+| **Izin Akses Penggunaan (`PACKAGE_USAGE_STATS`)** | Diminta di awal pada layar izin (Permissions Screen). Diperlukan agar `StreamService` dapat mendeteksi saat pengguna berada di dalam atau di luar aplikasi target yang dibagikan, guna mengaktifkan sensor privasi otomatis (*auto-pause* ke gambar jeda saat membuka WhatsApp/Home). |
 | **Suara Aplikasi Internal (`AudioPlaybackCapture`)** | Hanya tersedia di **Android 10 (API 29) ke atas**. Pada Android 7-9, aplikasi akan menampilkan notifikasi bahwa hanya suara mikrofon yang bisa direkam. |
 | **Foreground Service Type** | Wajib mendeklarasikan tipe service pada `AndroidManifest.xml`: `mediaProjection`, `microphone`, dan `camera` untuk memenuhi standar Android 14+. |
 
